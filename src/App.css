@@ -1,0 +1,104 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.toolbar {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+  font-family: 'Courier New', Courier, monospace;
+  width: 95%;
+}
+
+.toolbar input[type="file"] {
+  margin-left: 10px;
+}
+
+.svg-canvas-container {
+  display: flex;
+  align-items: flex-start; 
+  gap: 16px; 
+  padding: 16px; 
+  border: 2px solid #3498db; 
+  border-radius: 8px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  background-color: #f9f9f9; 
+}
+
+.svg-canvas {
+  width: 600px; 
+  height: 600px; 
+  position: relative;
+  overflow: hidden;
+  background-color: #ffffff; 
+  border: 1px solid #ccc;
+  padding: 20px;
+}
+
+.svg-element {
+  cursor: pointer;
+  transition: stroke 0.2s ease;
+}
+
+.svg-element:hover {
+  stroke: gray;
+  stroke-width: 2;
+}
+
+.svg-element.selected {
+  stroke: blue;
+  stroke-width: 3;
+}
+
+.properties-panel {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.properties-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.panel-container {
+  position: relative;
+  padding: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-basis: 300px;
+}
+
+.panel-heading {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.panel-form-groups {
+  margin-bottom: 15px;
+}
+
+.panel-form-groups input[type="text"] {
+  width: 90%;
+  padding: 8px;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+};
+
