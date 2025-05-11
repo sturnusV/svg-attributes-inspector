@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/svg-attributes-inspector/static/css/main.3d3ef4ff.css",
-    "main.js": "/svg-attributes-inspector/static/js/main.beac0ebd.js",
+    "main.css": "/svg-attributes-inspector/static/css/main.be5df982.css",
+    "main.js": "/svg-attributes-inspector/static/js/main.07f99261.js",
     "static/js/453.cb370c23.chunk.js": "/svg-attributes-inspector/static/js/453.cb370c23.chunk.js",
     "index.html": "/svg-attributes-inspector/index.html",
-    "main.3d3ef4ff.css.map": "/svg-attributes-inspector/static/css/main.3d3ef4ff.css.map",
-    "main.beac0ebd.js.map": "/svg-attributes-inspector/static/js/main.beac0ebd.js.map",
+    "main.be5df982.css.map": "/svg-attributes-inspector/static/css/main.be5df982.css.map",
+    "main.07f99261.js.map": "/svg-attributes-inspector/static/js/main.07f99261.js.map",
     "453.cb370c23.chunk.js.map": "/svg-attributes-inspector/static/js/453.cb370c23.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3d3ef4ff.css",
-    "static/js/main.beac0ebd.js"
+    "static/css/main.be5df982.css",
+    "static/js/main.07f99261.js"
   ]
 }
