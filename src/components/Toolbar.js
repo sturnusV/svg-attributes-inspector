@@ -20,7 +20,7 @@ const Toolbar = ({ onUploadSvg }) => {
         type="file"
         accept=".svg"
         onChange={handleFileChange}
-        style={{ marginLeft: '10px' }}
+        
       />
     </div>
   );
