@@ -1,33 +1,83 @@
-SVG Inspector & React Native Animation Helper:
+SVG Animator for React Native
+The Free, Open-Source Alternative to Lottie for SVG-Based Animations
 
 https://sturnusv.github.io/svg-attributes-inspector/
 
-A developer tool that helps inspect SVG files and extract attributes (path data, fill colors, transforms) to streamline their conversion into animated React Native components.
+A powerful developer tool that inspects, animates, and converts SVG files into optimized React Native animations using standard react-native-svg and react-native-reanimated.
 
-Features
-🔍 Visual SVG Inspector – Upload an SVG file and click elements to view their properties (path d, fill, stroke, transforms, etc.).
-📋 Copy Attributes – Easily extract path data for use in libraries like react-native-svg or react-native-reanimated.
-🔄 Animation-Ready – Designed to assist in converting static SVGs into dynamic React Native animations.
+✨ Features
+Core Inspection
+🔍 Visual SVG Inspector – Upload SVGs and inspect element properties (paths, fills, transforms)
+📋 Attribute Extraction – Copy optimized path data for React Native implementations
+🔄 Live DOM Preview – See changes reflected in real-time
 
-Use Case
-*Debug complex SVGs before implementing them in React Native.
-*Extract path data for morphing animations (react-native-reanimated).
-*Optimize SVG attributes for better performance in mobile apps.
+Animation Studio
+🎬 Multi-Type Animations – Create path morphing, rotations, translations, and opacity animations
+⏱️ Timeline Controls – Adjust duration, easing, and keyframes
+📊 Anchor Point Editing – Precisely control transform origins
 
-Tech Stack
-*React.js (Frontend)
-*SVG DOM Parsing (Extracting paths, fills, transforms)
+React Native Ready
+⚡ Performance Optimized – Output uses hardware-accelerated animations
+📱 Cross-Platform – Generates code compatible with iOS/Android
+🧩 Component Templates – Export reusable Animated SVG components
 
-🚀 Goal: Make SVG-to-React-Native workflows faster and more intuitive!
+🚀 Vision
+Goal: Become the go-to free solution for creating lightweight, customizable SVG animations in React Native without Lottie's dependency.
 
-Why This Exists
-Working with SVGs in React Native can be tricky—especially when animations require precise path data or attribute adjustments. This tool automates the inspection process, saving hours of manual debugging.
+Why This Exists:
+While Lottie dominates React Native animations, it requires After Effects and creates opaque JSON blobs. This tool empowers developers to:
 
-Future Plans
-*Add export to React Native code (e.g., generating <Path d="..."/> snippets).
-*Support animation previews.
+Use standard SVGs from designers
 
-How to Use
-*Upload the SVG file.
-*Click elements to inspect their attributes.
-*Copy/paste the data into your React Native project!
+Retain full control over animation logic
+
+Achieve better performance with direct Reanimated integration
+
+🛠 Tech Stack
+Frontend: React.js + Vite
+
+Animation: SVG.js + requestAnimationFrame
+
+Codegen: Babel plugin for RN optimization
+
+Rendering: react-native-svg compatible output
+
+📋 How to Use
+Upload SVG (or try our sample files)
+
+Inspect elements by clicking on them
+
+Animate using the visual timeline
+
+
+🌌 Future Roadmap
+Next Release
+✅ Animation keyframe editor
+✅ Export to React Native CLI template
+
+Planned
+🛠 Figma Plugin – Import SVGs directly from design tools
+📱 Expo Snack Integration – Test animations instantly
+🎨 Preset Gallery – Common animations (pulse, bounce, morph)
+
+💡 Why Not Lottie?
+Feature	This Tool	Lottie
+No AE Required	✅ Yes	❌ No
+Code Transparency	✅ Full control	❌ Opaque JSON
+Bundle Size	✅ ~10kb	❌ ~150kb
+Custom Interpolation	✅ Any easing	❌ Limited
+🛠 Development
+bash
+git clone https://github.com/your-repo/svg-animator.git
+cd svg-animator
+npm install
+npm run dev
+Contribute: We welcome PRs for:
+
+New animation types (3D transforms?)
+
+Enhanced codegen templates
+
+Performance optimizations
+
+🌟 Free & Open Source – Support the project by starring on GitHub!

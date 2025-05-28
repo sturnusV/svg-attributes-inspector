@@ -1,93 +1,124 @@
 import React, { useState, useEffect } from 'react';
 
-const SvgCanvas = ({ svgContent }) => {
+const SvgCanvas = ({ svgContent, onPathDataUpdate, onSelectPath, selectedPathIndex }) => {
   const [selectedElementIndex, setSelectedElementIndex] = useState(null);
   const [selectedElementData, setSelectedElementData] = useState({});
   const [viewBox, setViewBox] = useState('0 0 768 768');
-  const [copiedKey, setCopiedKey] = useState(null);
   const [parseError, setParseError] = useState(null);
+  const [parsedSvg, setParsedSvg] = useState('');
 
   useEffect(() => {
-      if (svgContent) {
-        try {
-          const parser = new DOMParser();
-          const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
-          const vb = svgDoc.documentElement.getAttribute('viewBox');
-          if (vb) setViewBox(vb);
-          setParseError(null);
-        } catch (error) {
-          console.error("SVG parsing error:", error);
-          setParseError(error.message);
-        }
+    if (svgContent && svgContent !== parsedSvg) {
+      try {
+        const parser = new DOMParser();
+        const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
+        const vb = svgDoc.documentElement.getAttribute('viewBox');
+        if (vb) setViewBox(vb);
+
+        const pathElements = Array.from(svgDoc.querySelectorAll('path')).slice(0, 20);
+        const paths = pathElements.map(path => ({
+          d: path.getAttribute('d') || '',
+          fill: path.getAttribute('fill') || 'none',
+          fillOpacity: path.getAttribute('fill-opacity') || '1',
+          fillRule: path.getAttribute('fill-rule') || 'nonzero',
+        }));
+
+        onPathDataUpdate(paths);
+        setParsedSvg(svgContent);
+        setParseError(null);
+      } catch (error) {
+        console.error("SVG parsing error:", error);
+        setParseError(error.message);
       }
-    }, [svgContent]);
+    }
+  }, [svgContent, parsedSvg, onPathDataUpdate]);
 
   const parseSvgContent = (svgContent, handleElementClick, selectedElementIndex) => {
     try {
       const cleanedSvgContent = svgContent
-          .replace(/<\?xml.*?\?>/, '')
-          .replace(/<!DOCTYPE.*?>/, '');
+        .replace(/<\?xml.*?\?>/, '')
+        .replace(/<!DOCTYPE.*?>/, '');
 
-        const parser = new DOMParser();
-        const svgDoc = parser.parseFromString(cleanedSvgContent, 'image/svg+xml');
-        
-        const elementsToParse = ['path', 'rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline'];
-        const svgElements = elementsToParse.flatMap(tag => Array.from(svgDoc.querySelectorAll(tag)));
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(cleanedSvgContent, 'image/svg+xml');
 
-        return svgElements.map((el, index) => {
-          const tagName = el.tagName;
-          const props = {};
+      const elementsToParse = ['path', 'rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline'];
+      const svgElements = elementsToParse.flatMap(tag => Array.from(svgDoc.querySelectorAll(tag)));
 
-          for (let attr of el.attributes) {
-            const camelCaseAttr = attr.name.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-            
-            if (camelCaseAttr === 'style') {
-              const styleObj = {};
-              attr.value.split(';').forEach(declaration => {
-                const [property, value] = declaration.split(':');
-                if (property && value) {
-                  const camelCaseProp = property.trim().replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-                  styleObj[camelCaseProp] = value.trim();
-                }
-              });
-              props.style = styleObj;
-            } else {
-              props[camelCaseAttr] = attr.value;
-            }
+      return svgElements.map((el, index) => {
+        const tagName = el.tagName;
+        const props = {};
+
+        for (let attr of el.attributes) {
+          const camelCaseAttr = attr.name.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+
+          if (camelCaseAttr === 'style') {
+            const styleObj = {};
+            attr.value.split(';').forEach(declaration => {
+              const [property, value] = declaration.split(':');
+              if (property && value) {
+                const camelCaseProp = property.trim().replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+                styleObj[camelCaseProp] = value.trim();
+              }
+            });
+            props.style = styleObj;
+          } else {
+            props[camelCaseAttr] = attr.value;
           }
+        }
 
-          return React.createElement(tagName, {
-            key: index,
-            ...props,
-            onClick: () => handleElementClick(index, tagName, props),
-            className: `svg-element ${selectedElementIndex === index ? 'selected' : ''}`
-          });
+        return React.createElement(tagName, {
+          key: index,
+          ...props,
+          onClick: () => handleElementClick(index, tagName, props),
+          className: `svg-element ${selectedElementIndex === index ? 'selected' : ''}`
         });
-      } catch (error) {
-        console.error("SVG element parsing error:", error);
-        setParseError("Failed to parse SVG elements");
-        return null;
-      }
-    };
+      });
+    } catch (error) {
+      console.error("SVG element parsing error:", error);
+      setParseError("Failed to parse SVG elements");
+      return null;
+    }
+  };
 
   const handleElementClick = (index, tagName, attributes) => {
     const displayAttributes = { ...attributes };
-    
+
     if (displayAttributes.style) {
       Object.entries(displayAttributes.style).forEach(([key, value]) => {
         displayAttributes[`style.${key}`] = value;
       });
       delete displayAttributes.style;
     }
-    
+
+    const standardAttributes = [
+      'fill', 'd', 'fillOpacity', 'fillRule',
+      'stroke', 'strokeWidth', 'transform',
+      'x', 'y', 'width', 'height',
+      'cx', 'cy', 'r',
+      'rx', 'ry',
+      'x1', 'y1', 'x2', 'y2',
+      'points'
+    ];
+
+    standardAttributes.forEach(attr => {
+      if (attributes[attr] && !displayAttributes[attr]) {
+        displayAttributes[attr] = attributes[attr];
+      }
+    });
+
     setSelectedElementIndex(index);
     setSelectedElementData({ tagName, attributes: displayAttributes });
+
+    if (typeof onSelectPath === 'function') {
+      onSelectPath(index, tagName, displayAttributes);
+    }
   };
 
   const renderSvgContent = () => {
     try {
       if (!svgContent) return null;
-      
+
       const elements = parseSvgContent(svgContent, handleElementClick, selectedElementIndex);
       if (!elements) return null;
 
@@ -119,82 +150,6 @@ const SvgCanvas = ({ svgContent }) => {
         )}
         {renderSvgContent()}
       </div>
-
-      {selectedElementIndex !== null && (
-        <div className="attributes-panel">
-            <h3 className="panel-heading">SVG Attributes</h3>
-            <table>
-              <tbody>
-                <tr>
-                  <td><strong>index</strong></td>
-                  <td>{selectedElementIndex}</td>
-                </tr>
-                <tr>
-                  <td><strong>element</strong></td>
-                  <td>{selectedElementData.tagName}</td>
-                </tr>
-                {Object.entries(selectedElementData.attributes).map(([key, value]) => {
-                  const isLong = key === 'd' && value.length > 10;
-                  const displayValue = isLong ? `${value.slice(0, 10)}...` : value;
-
-                  const handleCopy = () => {
-                    navigator.clipboard.writeText(value);
-                    setCopiedKey(key);
-                    setTimeout(() => setCopiedKey(null), 1000);
-                  };
-
-                  return (
-                    <tr key={key}>
-                      <td><strong>{key}</strong></td>
-                      <td style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-                        <span style={{ wordBreak: 'break-word' }}>{displayValue}</span>
-                        {isLong && (
-                          <div style={{ position: 'relative', width: '60px', height: '24px', margin: '10px' }}>
-                            {copiedKey === key ? (
-                              <span
-                                style={{
-                                  position: 'absolute',
-                                  top: 0,
-                                  left: 0,
-                                  width: '100%',
-                                  height: '100%',
-                                  fontSize: '0.75em',
-                                  color: 'green',
-                                  textAlign: 'center',
-                                  lineHeight: '24px',
-                                  background: 'transparent',
-                                }}
-                              >
-                                Copied!
-                              </span>
-                            ) : (
-                              <button
-                                onClick={handleCopy}
-                                style={{
-                                  position: 'absolute',
-                                  top: 0,
-                                  left: 0,
-                                  width: '100%',
-                                  height: '100%',
-                                  fontSize: '0.8em',
-                                  padding: 0,
-                                }}
-                              >
-                                Copy
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-
-
-              </tbody>
-            </table>
-        </div>
-      )}
     </div>
   );
 };
