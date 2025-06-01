@@ -1,8 +1,9 @@
+import React, { useEffect, useState, useRef } from "react"; 
 import WelcomeModal from "./WelcomeModal";
-import { useEffect, useState } from "react";
 
 const Toolbar = ({ onUploadSvg, svgContent }) => {
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const fileInputRef = useRef(null); 
 
   useEffect(() => {
     if (!svgContent) {
@@ -29,6 +30,10 @@ const Toolbar = ({ onUploadSvg, svgContent }) => {
     }
   };
 
+  const handleUploadButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
   const handleLoadSample = async () => {
     try {
       const response = await fetch(`${process.env.PUBLIC_URL}/9.svg`);
@@ -48,22 +53,25 @@ const Toolbar = ({ onUploadSvg, svgContent }) => {
         type="file"
         accept=".svg"
         onChange={handleFileChange}
-        id="svg-upload"
+        ref={fileInputRef} 
         style={{ display: 'none' }}
       />
-      <label htmlFor="svg-upload" className="toolbar-button">
-        Upload SVG
-      </label>
       <button 
+        onClick={handleUploadButtonClick} 
+        className="toolbar-button"
+      >
+        Upload SVG
+      </button>
+      <button
         onClick={handleLoadSample}
         className="toolbar-button sample-button"
       >
         Load Sample
       </button>
-      
+
       {showWelcomeModal && (
         <WelcomeModal
-          onUpload={handleFileChange}
+          onUpload={handleFileChange} 
           onUseSample={handleLoadSample}
           onClose={handleCloseWelcome}
         />

@@ -148,6 +148,14 @@
   .toolbar-button {
     width: 100%;
   }
+
+  .panel-heading {
+    text-align: center;
+  }
+
+  .mode-selector label{
+    text-align: center;
+  }
 }
 
 .panel-heading {
@@ -249,6 +257,60 @@
     font-size: 0.9rem;
     color: #555;
     font-weight: 500;
+}
+
+.input-with-buttons {
+    display: flex; 
+    align-items: center; 
+    gap: 4px; 
+    width: 100%; 
+}
+
+.input-with-buttons input[type="number"] {
+    flex-grow: 1; 
+    text-align: center; 
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Hide default Chrome/Safari/Edge spinners */
+.input-with-buttons input[type="number"]::-webkit-outer-spin-button,
+.input-with-buttons input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.spinner-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 10px; 
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.2em; 
+    line-height: 1; 
+    min-width: 32px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.spinner-button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.spinner-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+
+@media (max-width: 767px) {
+    .control-group label {
+        margin-bottom: 5px; 
+    }
 }
 
 .anchor-select,
@@ -942,4 +1004,175 @@ button:disabled {
     flex-direction: column;
     text-align: center;
   }
+}
+
+/* Animation Panel additions */
+.record-button {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.record-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Animations List styles */
+.animations-list-container {
+    flex: 2;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.animations-list {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.animations-list h3 {
+    margin-top: 0;
+}
+
+.animations-tags-list {
+    list-style: none; 
+    padding: 0;
+    margin: 0;
+}
+
+.animation-item {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 10px; 
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.animation-tags-wrapper {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 8px; 
+    width: 100%; 
+}
+
+.animation-tag {
+    background-color: #e0e0e0; 
+    color: #333; 
+    padding: 6px 12px;
+    border-radius: 20px; 
+    font-size: 0.85em; 
+    white-space: nowrap; 
+}
+
+.animation-actions {
+    display: flex;
+    gap: 8px;
+    align-self: flex-end; 
+}
+
+.play-animation-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease; 
+}
+
+.play-animation-button:hover {
+    background-color: #45a049;
+}
+
+.remove-animation-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease; 
+}
+
+.remove-animation-button:hover {
+    background-color: #e53935;
+}
+
+.global-controls {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; 
+}
+
+.play-all-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.play-all-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.play-all-button.active {
+    background-color: #2E7D32;
+}
+
+.play-all-button:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+.stop-all-button {
+    background-color: #f44336;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.stop-all-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.stop-all-button:hover:not(:disabled) {
+    background-color: #e53935;
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+    .animation-item {
+        flex-direction: row; 
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .animation-tags-wrapper {
+        flex-grow: 1; 
+    }
+
+    .animation-actions {
+        align-self: auto; 
+    }
 }
