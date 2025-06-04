@@ -142,7 +142,7 @@ const App = () => {
     setSelectedPathIndex(null);
     setSelectedElementData(null);
 
-    // Check if SVG contains only path elements
+    // Check if SVG contains only path elements!
     const parser = new DOMParser();
     const svgDoc = parser.parseFromString(svgData, 'image/svg+xml');
     const nonPathElements = Array.from(svgDoc.querySelectorAll('*')).filter(

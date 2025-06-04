@@ -5,6 +5,7 @@ const AnimationsList = ({ svgContent, animations, onRemoveAnimation, onPlayAnima
     const generateExportCode = () => {
         handleExport(svgContent, animations);
     };
+    
 
     return (
         <div className="animations-list">

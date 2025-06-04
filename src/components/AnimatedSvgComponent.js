@@ -51,10 +51,9 @@ const AnimatedSvgComponent = React.forwardRef(({
             // Calculate speed factor once per frame
             const frameSpeedFactor = 0.3 * (deltaTime / 16.67);
 
-
             // Handle single element animation
             if (isPlaying && selectedPathIndex !== null) {
-                const speedFactor = frequency * 0.3 * (deltaTime / 16.67);
+                const speedFactor = frequency * (deltaTime / 16.67);
 
                 if (animationMode === 'rotate') {
                     setCurrentRotation(prev => {
