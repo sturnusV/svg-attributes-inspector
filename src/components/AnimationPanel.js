@@ -225,7 +225,6 @@ const AnimationPanel = ({
                             >
                                 <option value="x">X Axis</option>
                                 <option value="y">Y Axis</option>
-                                <option value="xy">Diagonal</option>
                             </select>
                         </div>
                         <div className="control-group">

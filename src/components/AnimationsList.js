@@ -1,6 +1,11 @@
 import React from 'react';
 
-const AnimationsList = ({ animations, onRemoveAnimation, onPlayAnimation, isPlayingAll, handleStopAll, handlePlayAllAnimations }) => {
+const AnimationsList = ({ svgContent, animations, onRemoveAnimation, onPlayAnimation, isPlayingAll, handleStopAll, handlePlayAllAnimations, handleExport }) => {
+    
+    const generateExportCode = () => {
+        handleExport(svgContent, animations);
+    };
+
     return (
         <div className="animations-list">
             <div className="global-controls">
@@ -17,6 +22,13 @@ const AnimationsList = ({ animations, onRemoveAnimation, onPlayAnimation, isPlay
                     className="stop-all-button"
                 >
                     Stop All
+                </button>
+                <button
+                    onClick={generateExportCode}
+                    disabled={animations.length === 0}
+                    className="export-button"
+                >
+                    Export as React Native Component
                 </button>
             </div>
             {animations.length === 0 ? (

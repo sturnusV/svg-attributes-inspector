@@ -185,6 +185,286 @@ const App = () => {
       console.log("Animations anchor", anchorPoint);
       const anchorPointMA =anchorPoint;
 
+  const handleExport = (svgContent, animations) => {
+    // 1. Parse the SVG content to extract paths and their attributes
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
+    const paths = svgDoc.querySelectorAll('path');
+    
+    // 2. Generate the React Native component code
+    let componentCode = generateComponentCode(paths, animations);
+    
+    // 3. Create a downloadable file
+    downloadFile('AnimatedComponent.js', componentCode);
+};
+
+const generateComponentCode = (paths, animations) => {
+    // Generate imports
+    let code = `import React, { useEffect, useState } from 'react';\n`;
+    code += `import { View, StyleSheet, Dimensions } from 'react-native';\n`;
+    code += `import Svg, { Path, G } from 'react-native-svg';\n`;
+    code += `import Animated, { useSharedValue, useAnimatedProps, withRepeat, withTiming } from 'react-native-reanimated';\n\n`;
+    
+    code += `const { width, height } = Dimensions.get('window');\n\n`;
+    
+    // Add bounding box helper function
+    code += `const getBoundingBoxFromPath = (d) => {\n`;
+    code += `  const commands = d.match(/-?\\d*\\.?\\d+/g).map(Number);\n`;
+    code += `  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;\n\n`;
+    code += `  for (let i = 0; i < commands.length; i += 2) {\n`;
+    code += `    const x = commands[i];\n`;
+    code += `    const y = commands[i + 1];\n`;
+    code += `    if (x < minX) minX = x;\n`;
+    code += `    if (y < minY) minY = y;\n`;
+    code += `    if (x > maxX) maxX = x;\n`;
+    code += `    if (y > maxY) maxY = y;\n`;
+    code += `  }\n\n`;
+    code += `  return {\n`;
+    code += `    minX,\n`;
+    code += `    minY,\n`;
+    code += `    maxX,\n`;
+    code += `    maxY,\n`;
+    code += `    width: maxX - minX,\n`;
+    code += `    height: maxY - minY,\n`;
+    code += `  };\n`;
+    code += `};\n\n`;
+    
+    code += `const AnimatedPath = Animated.createAnimatedComponent(Path);\n`;
+    code += `const AnimatedG = Animated.createAnimatedComponent(G);\n\n`;
+    
+    // Start component definition
+    code += `const AnimatedSVGComponent = () => {\n`;
+    
+    // Generate shared values for each animation
+    animations.forEach((anim, index) => {
+        code += `  const animation${index + 1} = useSharedValue(${getInitialValue(anim.mode)});\n`;
+    });
+    code += `\n`;
+
+    // Generate path data constants
+    paths.forEach((path, index) => {
+        const d = path.getAttribute('d');
+        const fill = path.getAttribute('fill') || '#000000';
+        const fillOpacity = path.getAttribute('fill-opacity') || '1';
+        const fillRule = path.getAttribute('fill-rule') || 'nonzero';
+        
+        code += `  const pathD${index + 1} = "${d}";\n`;
+        code += `  const path${index + 1}Fill = "${fill}";\n`;
+        code += `  const path${index + 1}FillOpacity = "${fillOpacity}";\n`;
+        code += `  const path${index + 1}FillRule = "${fillRule}";\n\n`;
+    });
+
+    // Generate animated props using the pre-calculated bounding boxes and anchor points
+    animations.forEach((anim, index) => {
+        code += `  // Animation for element ${anim.elementIndex + 1} (${anim.elementType})\n`;
+        code += `  const animatedProps${index + 1} = useAnimatedProps(() => {\n`;
+        code += generateAnimatedPropsCode(anim, index);
+        code += `  });\n\n`;
+    });
+
+    // Generate animation effects
+    animations.forEach((anim, index) => {
+        code += generateAnimationEffectCode(anim, index);
+    });
+    
+    // Generate JSX return
+    code += `  return (\n`;
+    code += `    <View style={styles.container}>\n`;
+    code += `      <Svg width={256} height={256} viewBox="-128 -128 1024 1024">\n`;
+    
+    paths.forEach((path, index) => {
+        const animIndex = animations.findIndex(a => a.elementIndex === index);
+        const fill = path.getAttribute('fill') || '#000000';
+        const fillOpacity = path.getAttribute('fill-opacity') || '1';
+        const fillRule = path.getAttribute('fill-rule') || 'nonzero';
+        
+        if (animIndex >= 0) {
+            code += `          <AnimatedPath d={pathD${index + 1}} animatedProps={animatedProps${animIndex + 1}} fill="${fill}" fill-opacity="${fillOpacity}" fill-rule="${fillRule}" />\n`;
+        } else {
+            code += `          <AnimatedPath d={pathD${index + 1}} fill="${fill}" fill-opacity="${fillOpacity}" fill-rule="${fillRule}" />\n`;
+        }
+    });
+    
+    code += `      </Svg>\n`;
+    code += `    </View>\n`;
+    code += `  );\n`;
+    code += `};\n\n`;
+    
+    // Add styles
+    code += `const styles = StyleSheet.create({\n`;
+    code += `  container: {\n`;
+    code += `    flex: 1,\n`;
+    code += `    justifyContent: 'center',\n`;
+    code += `    alignItems: 'center',\n`;
+    code += `  },\n`;
+    code += `});\n\n`;
+    
+    code += `export default AnimatedSVGComponent;\n`;
+    
+    return code;
+};
+
+const getInitialValue = (mode) => {
+    switch(mode) {
+        case 'rotate': return '0';
+        case 'scale': return '1';
+        case 'translate': return '0';
+        case 'opacity': return '1';
+        default: return '0';
+    }
+};
+
+const generateAnimatedPropsCode = (animation, index) => {
+    let code = '';
+    const animationVar = `animation${index + 1}`;
+    
+    switch(animation.mode) {
+        case 'rotate':
+            // Use the pre-calculated anchor point from animation data
+            if (animation.anchorPointMA) {
+                // Use manual anchor point if specified
+                code = `    return {\n`;
+                code += `      transform: [\n`;
+                code += `        { translateX: ${animation.anchorPointMA.x} },\n`;
+                code += `        { translateY: ${animation.anchorPointMA.y} },\n`;
+                code += `        { rotate: \`\${${animationVar}.value}deg\` },\n`;
+                code += `        { translateX: -${animation.anchorPointMA.x} },\n`;
+                code += `        { translateY: -${animation.anchorPointMA.y} },\n`;
+                code += `      ],\n`;
+                code += `    };\n`;
+            } else {
+                // Fallback to standard anchor points
+                const bbox = animation.boundingBox;
+                code = `    // Using standard anchor point: ${animation.anchorPoint}\n`;
+                code += `    const bbox = ${JSON.stringify(bbox)};\n`;
+                code += `    let anchorX, anchorY;\n\n`;
+                
+                code += `    switch('${animation.anchorPoint}') {\n`;
+                code += `      case 'top-left':\n`;
+                code += `        anchorX = bbox.minX;\n`;
+                code += `        anchorY = bbox.minY;\n`;
+                code += `        break;\n`;
+                code += `      case 'top':\n`;
+                code += `        anchorX = (bbox.minX + bbox.maxX) / 2;\n`;
+                code += `        anchorY = bbox.minY;\n`;
+                code += `        break;\n`;
+                code += `      case 'top-right':\n`;
+                code += `        anchorX = bbox.maxX;\n`;
+                code += `        anchorY = bbox.minY;\n`;
+                code += `        break;\n`;
+                code += `      case 'left':\n`;
+                code += `        anchorX = bbox.minX;\n`;
+                code += `        anchorY = (bbox.minY + bbox.maxY) / 2;\n`;
+                code += `        break;\n`;
+                code += `      case 'center':\n`;
+                code += `        anchorX = (bbox.minX + bbox.maxX) / 2;\n`;
+                code += `        anchorY = (bbox.minY + bbox.maxY) / 2;\n`;
+                code += `        break;\n`;
+                code += `      case 'right':\n`;
+                code += `        anchorX = bbox.maxX;\n`;
+                code += `        anchorY = (bbox.minY + bbox.maxY) / 2;\n`;
+                code += `        break;\n`;
+                code += `      case 'bottom-left':\n`;
+                code += `        anchorX = bbox.minX;\n`;
+                code += `        anchorY = bbox.maxY;\n`;
+                code += `        break;\n`;
+                code += `      case 'bottom':\n`;
+                code += `        anchorX = (bbox.minX + bbox.maxX) / 2;\n`;
+                code += `        anchorY = bbox.maxY;\n`;
+                code += `        break;\n`;
+                code += `      case 'bottom-right':\n`;
+                code += `        anchorX = bbox.maxX;\n`;
+                code += `        anchorY = bbox.maxY;\n`;
+                code += `        break;\n`;
+                code += `    }\n\n`;
+                
+                code += `    return {\n`;
+                code += `      transform: [\n`;
+                code += `        { translateX: anchorX },\n`;
+                code += `        { translateY: anchorY },\n`;
+                code += `        { rotate: \`\${${animationVar}.value}deg\` },\n`;
+                code += `        { translateX: -anchorX },\n`;
+                code += `        { translateY: -anchorY },\n`;
+                code += `      ],\n`;
+                code += `    };\n`;
+            }
+            break;
+            
+        case 'translate':
+            if (animation.translateAxis === 'x') {
+                code = `    return {\n`;
+                code += `      transform: [\n`;
+                code += `        { translateX: ${animationVar}.value },\n`;
+                code += `      ],\n`;
+                code += `    };\n`;
+            } else {
+                code = `    return {\n`;
+                code += `      transform: [\n`;
+                code += `        { translateY: ${animationVar}.value },\n`;
+                code += `      ],\n`;
+                code += `    };\n`;
+            }
+            break;
+            
+        case 'scale':
+            const bbox = animation.boundingBox;
+            code = `    const centerX = ${(bbox.minX + bbox.maxX) / 2};\n`;
+            code += `    const centerY = ${(bbox.minY + bbox.maxY) / 2};\n\n`;
+            code += `    return {\n`;
+            code += `      transform: [\n`;
+            code += `        { translateX: centerX },\n`;
+            code += `        { translateY: centerY },\n`;
+            code += `        { scale: ${animationVar}.value },\n`;
+            code += `        { translateX: -centerX },\n`;
+            code += `        { translateY: -centerY },\n`;
+            code += `      ],\n`;
+            code += `    };\n`;
+            break;
+            
+        case 'opacity':
+            code = `    return {\n`;
+            code += `      opacity: ${animationVar}.value,\n`;
+            code += `    };\n`;
+            break;
+            
+        default:
+            code = `    return {};\n`;
+    }
+    
+    return code;
+};
+
+const generateAnimationEffectCode = (animation, index) => {
+    let code = `  useEffect(() => {\n`;
+    code += `    animation${index + 1}.value = withRepeat(\n`;
+    code += `      withTiming(${getAnimationTargetValue(animation)}, { duration: ${1000*animation.frequency} }),\n`;
+    code += `      -1,\n`;
+    code += `      true\n`;
+    code += `    );\n`;
+    code += `  }, []);\n\n`;
+    return code;
+};
+
+const getAnimationTargetValue = (animation) => {
+    switch(animation.mode) {
+        case 'rotate': return animation.rotationAngle;
+        case 'translate': return animation.translateDistance;
+        case 'scale': return animation.scaleTo;
+        case 'opacity': return animation.opacityRange;
+        default: return '0';
+    }
+};
+
+const downloadFile = (filename, text) => {
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+};
+
   return (
     <div className="App">
       <Toolbar onUploadSvg={handleUploadSvg} svgContent={svgContent} />
@@ -302,7 +582,9 @@ const App = () => {
           <div className='animations-list-container'>
             <h3 className="panel-heading">Recorded Animations</h3>
             <AnimationsList
+              svgContent={svgContent}
               animations={animations}
+              handleExport={handleExport}
               onRemoveAnimation={handleRemoveAnimation}
               onPlayAnimation={handlePlayAnimation}
               isPlayingAll={isPlayingAll}

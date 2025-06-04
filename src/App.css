@@ -1176,3 +1176,16 @@ button:disabled {
         align-self: auto; 
     }
 }
+
+/* Media query for smaller screens */
+@media (max-width: 480px) {
+    .global-controls {
+        flex-direction: column; 
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .global-controls button {
+        width: 100%;
+    }
+}
