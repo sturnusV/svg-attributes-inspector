@@ -1,6 +1,7 @@
 # SVG Animator for React Native
 
-https://sturnusv.github.io/svg-attributes-inspector/
+[![GitHub stars](https://img.shields.io/github/stars/sturnusv/svg-attributes-inspector?style=social)](https://github.com/sturnusv/svg-attributes-inspector)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 The Free, Open-Source Alternative to Lottie for SVG-Based Animations
 
@@ -32,15 +33,16 @@ A powerful developer tool that inspects, animates, and converts SVG files into o
    - The file contains all your animations ready for React Native
 
 2. **Install Dependencies**:
-    expo install react-native-svg react-native-reanimated
+   ```bash
+   # For Expo projects
+   expo install react-native-svg react-native-reanimated
 
-    or for bare React Native:
+   # For bare React Native projects
+   npm install react-native-svg react-native-reanimated
+   # or
+   yarn add react-native-svg react-native-reanimated
 
-    bash
-    npm install react-native-svg react-native-reanimated
-    Use in Your Project:
-
-javascript
+3. **Use in Your Projects**:
 import AnimatedSVG from './AnimatedComponent';
 
 function MyScreen() {
@@ -51,62 +53,68 @@ function MyScreen() {
   );
 }
 
-Customization Options:
+## Customization Options
 
-Adjust size via width and height props
+- **Adjust size** via `width` and `height` props  
+- **Change colors** by modifying the `fill` attributes in the exported component  
+- **Control playback** with React Native's `Animated` API  
 
-Change colors by modifying the fill attributes in the exported component
+---
 
-Control playback with React Native's Animated API
+## 🛠 Tech Stack
 
-🛠 Tech Stack
-Frontend: React + Vite
+- **Frontend**: React + Vite  
+- **Animation**: `react-native-reanimated` compatible output  
+- **SVG Processing**: SVG.js  
+- **Code Generation**: Custom Babel plugin for RN optimization  
 
-Animation: react-native-reanimated compatible output
+---
 
-SVG Processing: SVG.js
+## 📋 How to Use the Tool
 
-Code Generation: Custom Babel plugin for RN optimization
+1. Upload an SVG file (or try our sample files)
+2. Click elements to inspect their properties
+3. Add animations using the visual editor:
+   - Choose animation type (rotate, translate, opacity)
+   - Set anchor points and parameters
+   - Adjust frequency/duration
+4. Export to React Native component
 
-📋 How to Use the Tool
-Upload an SVG file (or try our sample files)
+---
 
-Click elements to inspect their properties
+## 🌌 Roadmap
 
-Add animations using the visual editor:
+- Figma plugin for direct SVG import  
+- Animation timeline with keyframes  
+- Expo Snack integration for instant testing  
 
-Choose animation type (rotate, translate, opacity)
+---
 
-Set anchor points and parameters
+## 💡 Why Choose This Over Lottie?
 
-Adjust frequency/duration
+| Feature              | This Tool      | Lottie         |
+|----------------------|----------------|----------------|
+| No After Effects     | ✅ Yes         | ❌ No          |
+| Code Transparency    | ✅ Full        | ❌ JSON        |
+| Bundle Size          | ✅ ~10kb       | ❌ 150kb+      |
+| Custom Controls      | ✅ Full        | ❌ Limited     |
 
-Export to React Native component
-
-🌌 Roadmap
-
-Figma plugin for direct SVG import
-
-Animation timeline with keyframes
-
-Expo Snack integration for instant testing
-
-💡 Why Choose This Over Lottie?
-Feature	This Tool	Lottie
-No After Effects	✅ Yes	❌ No
-Code Transparency	✅ Full	❌ JSON
-Bundle Size	✅ ~10kb	❌ 150kb+
-Custom Controls	✅ Full	❌ Limited
+---
 
 We welcome contributions! Particularly for:
 
-New animation types (3D transforms, path morphing)
+- New animation types (3D transforms, path morphing)  
+- Enhanced codegen templates  
+- Performance optimizations  
 
-Enhanced codegen templates
+---
 
-Performance optimizations
+## 📄 License
 
-📄 License
-MIT © Yusuf ATAKAN
+MIT © Yusuf ATAKAN  
 
-🌟 Free & Open Source – Support the project by starring on GitHub!
+---
+
+## 🌟 Free & Open Source
+
+**Support the project by starring on GitHub!**
