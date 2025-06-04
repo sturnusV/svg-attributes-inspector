@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/svg-attributes-inspector/static/css/main.95a92065.css",
-    "main.js": "/svg-attributes-inspector/static/js/main.6e2d5299.js",
+    "main.css": "/svg-attributes-inspector/static/css/main.22fd03a6.css",
+    "main.js": "/svg-attributes-inspector/static/js/main.c07bc2fb.js",
     "static/js/453.cb370c23.chunk.js": "/svg-attributes-inspector/static/js/453.cb370c23.chunk.js",
     "index.html": "/svg-attributes-inspector/index.html",
-    "main.95a92065.css.map": "/svg-attributes-inspector/static/css/main.95a92065.css.map",
-    "main.6e2d5299.js.map": "/svg-attributes-inspector/static/js/main.6e2d5299.js.map",
+    "main.22fd03a6.css.map": "/svg-attributes-inspector/static/css/main.22fd03a6.css.map",
+    "main.c07bc2fb.js.map": "/svg-attributes-inspector/static/js/main.c07bc2fb.js.map",
     "453.cb370c23.chunk.js.map": "/svg-attributes-inspector/static/js/453.cb370c23.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.95a92065.css",
-    "static/js/main.6e2d5299.js"
+    "static/css/main.22fd03a6.css",
+    "static/js/main.c07bc2fb.js"
   ]
 }
